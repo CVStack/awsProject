@@ -57,7 +57,7 @@ public class awsTest {
 		// TODO Auto-generated method stub
 		
 		//System.out.println(ec2.);
-		System.out.println("Listing instances.....");
+		System.out.println("Listing Instances..");
 		boolean done = false;
 		
 		DescribeInstancesRequest request = new DescribeInstancesRequest();
