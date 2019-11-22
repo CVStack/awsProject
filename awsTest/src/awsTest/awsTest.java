@@ -9,21 +9,32 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.services.ec2.model.AvailabilityZone;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
 import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DescribeAvailabilityZonesResult;
+import com.amazonaws.services.ec2.model.DescribeImageAttributeRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.DescribeRegionsResult;
 import com.amazonaws.services.ec2.model.DryRunResult;
 import com.amazonaws.services.ec2.model.DryRunSupportedRequest;
+import com.amazonaws.services.ec2.model.Filter;
+import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
+import com.amazonaws.services.ec2.model.Region;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.Tag;
+import com.amazonaws.services.ecr.model.DescribeImagesFilter;
+import com.amazonaws.services.simplesystemsmanagement.model.transform.DescribeAvailablePatchesRequestMarshaller;
 
 
 public class awsTest {
@@ -58,6 +69,9 @@ public class awsTest {
 			System.out.println("3. stop instance");
 			System.out.println("4. reboot instance");
 			System.out.println("5. create instance");
+			System.out.println("6. image list");
+			System.out.println("7. available zone");
+			System.out.println("8. available region");
 			System.out.println("Enter an integer : ");
 		number = menu.nextInt();
 		switch(number) {
@@ -78,12 +92,19 @@ public class awsTest {
 			rebootInstance(id_string.nextLine());
 			break;
 		case 5 :
-			System.out.println("Enter Instance instance_Name :");
-			String instance_Name = id_string.nextLine();
 			System.out.println("Enter Instance ami_Image_Id :");
 			String ami_Image_Id = id_string.nextLine();
 			
-			createInstance(instance_Name, ami_Image_Id);
+			createInstance(ami_Image_Id);
+			break;
+		case 6 :
+			getAmiImageList();
+			break;
+		case 7 :
+			getAvailableZones();
+			break;
+		case 8 :
+			getAvailableRegions();
 			break;
 		}
 		}
@@ -211,7 +232,7 @@ public class awsTest {
 		
 	}
 	
-	private static void createInstance(String instance_Name,String ami_Image_Id) {
+	private static void createInstance(String ami_Image_Id) {
 		RunInstancesRequest run_request = new RunInstancesRequest().withImageId(ami_Image_Id)
 												.withInstanceType(InstanceType.T2Micro)
 												.withMaxCount(1).withMinCount(1);
@@ -221,7 +242,7 @@ public class awsTest {
 		String reservation_id = run_result.getReservation().getInstances().get(0).getInstanceId();
 //		Tag tag = new Tag().withKey("Name").withValue(instance_Name);
 //		
-//		CreateTagsRequest tag_request = new CreateTagsRequest().withTags(tag);
+//		CreateTagsRequest tag_request = new CreateTagsRequest().withResources(ami_Image_Id).withTags(tag);
 //		
 //		CreateTagsResult tag_result = ec2.createTags(tag_request);
 		
@@ -252,6 +273,57 @@ public class awsTest {
 				done = true;
 		}
 		return list;
+	}
+	
+	private static void getAvailableRegions() {
+		
+		DescribeRegionsResult result = ec2.describeRegions();
+		
+		for(Region region : result.getRegions()) {
+			System.out.printf(
+					"[region] : %s " +
+					"[endpoint] : %s\n",
+					region.getRegionName(),region.getEndpoint()
+					);
+		}
+	}
+	
+	private static void getAvailableZones() {
+		
+		DescribeAvailabilityZonesResult result 
+						= ec2.describeAvailabilityZones();
+		
+		for(AvailabilityZone zone : result.getAvailabilityZones()) {
+			System.out.printf(
+					"[AvailabilityZone] : %s " +
+					"[status] : %s " +
+					"[region] : %s\n",
+					zone.getZoneName(),zone.getState(),zone.getRegionName()
+					);
+		}
+	}
+
+	private static void getAmiImageList() { 
+		
+		System.out.println("Listing Images...");
+		
+		//private인 ami만 가져옴.
+		Filter filter = new Filter().withName("is-public").withValues("false");
+		DescribeImagesRequest request = new DescribeImagesRequest()
+												.withFilters(filter);
+		
+		DescribeImagesResult response = ec2.describeImages(request);
+
+		for(Image image : response.getImages()) {
+			System.out.printf(
+					"[ImageID] %s, " +
+					"[Name] %s, " + 
+					"[Owner] %s,",
+					image.getImageId(),
+					image.getName(),
+					image.getOwnerId()			
+					);
+		}
 	}
 	
 //	private static String getInstanceState(String instance_Num) { //해당 instance의 상태를 return
