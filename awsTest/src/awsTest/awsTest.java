@@ -64,14 +64,20 @@ public class awsTest {
 		int number;
 		  
 		while(true) {
-			System.out.println("1. list instance");
-			System.out.println("2. start instance");
-			System.out.println("3. stop instance");
-			System.out.println("4. reboot instance");
-			System.out.println("5. create instance");
-			System.out.println("6. image list");
-			System.out.println("7. available zone");
-			System.out.println("8. available region");
+			System.out.println(" ");
+			System.out.println(" ");
+			System.out.println("------------------------------------------------------------");
+			System.out.println(" Amazon AWS Control Panel using SDK ");
+			System.out.println(" ");
+			System.out.println(" Cloud Computing, Computer Science Department ");
+			System.out.println(" at Chungbuk National University ");
+			System.out.println("------------------------------------------------------------");
+			System.out.println(" 1. list instance 2. available zones ");
+			System.out.println(" 3. start instance 4. available regions ");
+			System.out.println(" 5. stop instance 6. create instance ");
+			System.out.println(" 7. reboot instance 8. list images ");
+			System.out.println(" 99. quit ");
+			System.out.println("------------------------------------------------------------");
 			System.out.println("Enter an integer : ");
 		number = menu.nextInt();
 		switch(number) {
@@ -79,33 +85,34 @@ public class awsTest {
 		case 1 :
 			listInstances();
 			break;
-		case 2:
-			System.out.println("Enter Instance Id : ");
-			startInstance(id_string.nextLine());
+		case 2 :
+			getAvailableZones();
 			break;
 		case 3:
 			System.out.println("Enter Instance Id : ");
-			stopInstance(id_string.nextLine());
+			startInstance(id_string.nextLine());
 			break;
 		case 4 :
+			getAvailableRegions();
+			break;
+		case 5:
+			System.out.println("Enter Instance Id : ");
+			stopInstance(id_string.nextLine());
+			break;
+		case 6 :
+			System.out.println("Enter Instance ami_Image_Id :");
+			String ami_Image_Id = id_string.nextLine();
+			createInstance(ami_Image_Id);
+			break;
+		case 7 :
 			System.out.println("Enter Instance Id :");
 			rebootInstance(id_string.nextLine());
 			break;
-		case 5 :
-			System.out.println("Enter Instance ami_Image_Id :");
-			String ami_Image_Id = id_string.nextLine();
-			
-			createInstance(ami_Image_Id);
-			break;
-		case 6 :
+		case 8 :
 			getAmiImageList();
 			break;
-		case 7 :
-			getAvailableZones();
-			break;
-		case 8 :
-			getAvailableRegions();
-			break;
+		case 99:
+			return;
 		}
 		}
 		
