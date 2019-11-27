@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.codepipeline.model.AWSSessionCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.AvailabilityZone;
@@ -33,6 +34,7 @@ import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
 import com.amazonaws.services.ec2.model.Tag;
+import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ecr.model.DescribeImagesFilter;
 import com.amazonaws.services.simplesystemsmanagement.model.transform.DescribeAvailablePatchesRequestMarshaller;
 
@@ -76,7 +78,7 @@ public class awsTest {
 			System.out.println(" 3. start instance 4. available regions ");
 			System.out.println(" 5. stop instance 6. create instance ");
 			System.out.println(" 7. reboot instance 8. list images ");
-			System.out.println(" 99. quit ");
+			System.out.println(" 9. terminate instance 99. quit ");
 			System.out.println("------------------------------------------------------------");
 			System.out.println("Enter an integer : ");
 		number = menu.nextInt();
@@ -110,6 +112,10 @@ public class awsTest {
 			break;
 		case 8 :
 			getAmiImageList();
+			break;
+		case 9 :
+			System.out.println("Enter Instance Id : ");
+			terminateInstance(id_string.nextLine());
 			break;
 		case 99:
 			return;
@@ -238,7 +244,18 @@ public class awsTest {
 		System.out.printf("Instance %s is successfully rebooted!\n",instance_Num);
 		
 	}
-	
+	private static void terminateInstance(String instance_Num) {
+		List<String> list = getInstancesId();
+		if(!list.contains(instance_Num)) {
+			System.out.println("Not Valid Instance Id");
+			return;
+		}
+		TerminateInstancesRequest request = new TerminateInstancesRequest()
+												.withInstanceIds(instance_Num);
+		ec2.terminateInstances(request);
+		
+		System.out.printf("Instance %s is successfully terminated!\n",instance_Num);
+	}
 	private static void createInstance(String ami_Image_Id) {
 		RunInstancesRequest run_request = new RunInstancesRequest().withImageId(ami_Image_Id)
 												.withInstanceType(InstanceType.T2Micro)
@@ -257,6 +274,8 @@ public class awsTest {
 							,ami_Image_Id,reservation_id);
 		
 	}
+	
+	
 	private static List<String> getInstancesId() { //현재 생성된 instance들의 id값들을 가져옴
 
 		List<String> list = new ArrayList<String>();
