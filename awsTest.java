@@ -72,7 +72,7 @@ public class awsTest {
 			System.out.println(" Amazon AWS Control Panel using SDK ");
 			System.out.println(" ");
 			System.out.println(" Cloud Computing, Computer Science Department ");
-			System.out.println(" at Chungbuk National University ");
+			System.out.println(" ");
 			System.out.println("------------------------------------------------------------");
 			System.out.println(" 1. list instance 2. available zones ");
 			System.out.println(" 3. start instance 4. available regions ");
