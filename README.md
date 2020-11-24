@@ -14,7 +14,7 @@
 
 ![image](https://user-images.githubusercontent.com/38209962/100059747-eb116c80-2e6e-11eb-81fa-931496cb52ac.png)
 
-기능
+<h3>기능</h3>
 
 1. list instance : 인스턴스 목록을 가져온다.
 ![image](https://user-images.githubusercontent.com/38209962/100059924-2d3aae00-2e6f-11eb-9d35-146688da44bf.png)
